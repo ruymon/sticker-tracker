@@ -1,0 +1,16 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: sticker-tracker-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_DATABASE:-sticker_tracker}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - sticker_tracker_data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+volumes:
+  sticker_tracker_data:
