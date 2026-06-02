@@ -2,6 +2,7 @@ package sticker_tracker.ui.screens.home.sections;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.text.DecimalFormat;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -10,67 +11,79 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import sticker_tracker.domain.Progress;
-import sticker_tracker.domain.Section;
 import sticker_tracker.ui.Theme;
+import sticker_tracker.ui.components.Badge;
 import sticker_tracker.ui.components.ProgressBarCustom;
-import sticker_tracker.ui.components.RoundedButton;
 import sticker_tracker.ui.components.RoundedPanel;
 import sticker_tracker.ui.screens.home.HomeData;
 
 public final class CollectionProgressSection extends RoundedPanel {
 
-    private final DecimalFormat percentageFormat;
-    private final JPanel sectionProgressPanel;
-    private final RoundedButton sectionToggleButton;
+    private static final int STICKERS_PER_PACK = 7;
 
-    private boolean sectionProgressVisible;
+    private final DecimalFormat percentageFormat;
 
     public CollectionProgressSection(HomeData homeData) {
         super(Theme.RADIUS_LG);
         this.percentageFormat = new DecimalFormat("0.0");
-        this.sectionProgressVisible = false;
-        this.sectionProgressPanel = buildSectionProgressPanel(homeData);
-        this.sectionToggleButton = new RoundedButton("Ver por seção", RoundedButton.Variant.GHOST);
 
         setAlignmentX(LEFT_ALIGNMENT);
+        setPreferredSize(new Dimension(Theme.SPACE_NONE, Theme.DASHBOARD_PROGRESS_CARD_HEIGHT));
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, Theme.DASHBOARD_PROGRESS_CARD_HEIGHT));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(
-            Theme.SPACE_LG,
-            Theme.SPACE_LG,
-            Theme.SPACE_LG,
-            Theme.SPACE_LG
+            Theme.CARD_PADDING,
+            Theme.CARD_PADDING,
+            Theme.CARD_PADDING,
+            Theme.CARD_PADDING
         ));
-
-        sectionProgressPanel.setVisible(false);
-        sectionToggleButton.addActionListener(actionEvent -> toggleSectionProgress());
 
         add(buildTitleRow(homeData.progress()));
         add(Box.createVerticalStrut(Theme.SPACE_MD));
+        add(buildMainMetric(homeData.progress()));
+        add(Box.createVerticalGlue());
+        add(Box.createVerticalStrut(Theme.SPACE_MD));
         add(buildProgressBar(homeData.progress()));
         add(Box.createVerticalStrut(Theme.SPACE_SM));
-        add(buildSummaryLabel(homeData.progress()));
-        add(Box.createVerticalStrut(Theme.SPACE_SM));
-        add(sectionToggleButton);
-        add(sectionProgressPanel);
+        add(buildFooterRow(homeData.progress()));
     }
 
     private JPanel buildTitleRow(Progress progress) {
         final var titleRow = new JPanel(new BorderLayout());
         titleRow.setOpaque(false);
 
-        final var title = new JLabel("Sua Coleção");
-        title.setForeground(Theme.TEXT_PRIMARY);
-        title.setFont(Theme.FONT_SEMIBOLD.deriveFont(Theme.SIZE_MD));
+        final var title = new JLabel("PROGRESSO DO ÁLBUM");
+        title.setForeground(Theme.TEXT_SECONDARY);
+        title.setFont(Theme.FONT_SEMIBOLD.deriveFont(Theme.SIZE_XS));
 
-        final var percentage = new JLabel(percentageFormat.format(progress.percentage()) + "%");
-        percentage.setForeground(Theme.ACCENT);
-        percentage.setFont(Theme.FONT_SEMIBOLD.deriveFont(Theme.SIZE_BASE));
-        percentage.setHorizontalAlignment(SwingConstants.RIGHT);
+        final var percentage = new Badge(
+            percentageFormat.format(progress.percentage()) + "%",
+            Theme.ACCENT_MUTED,
+            Theme.ACCENT_HOVER
+        );
 
         titleRow.add(title, BorderLayout.WEST);
         titleRow.add(percentage, BorderLayout.EAST);
 
         return titleRow;
+    }
+
+    private JPanel buildMainMetric(Progress progress) {
+        final var metric = new JPanel(new FlowLayout(FlowLayout.LEFT, Theme.SPACE_NONE, Theme.SPACE_NONE));
+        metric.setOpaque(false);
+
+        final var collected = new JLabel(String.valueOf(progress.collected()));
+        collected.setForeground(Theme.TEXT_PRIMARY);
+        collected.setFont(Theme.FONT_BOLD.deriveFont(Theme.SIZE_DISPLAY));
+
+        final var total = new JLabel(" / " + progress.total());
+        total.setForeground(Theme.TEXT_SECONDARY);
+        total.setFont(Theme.FONT_SEMIBOLD.deriveFont(Theme.SIZE_LG));
+
+        metric.add(collected);
+        metric.add(total);
+
+        return metric;
     }
 
     private ProgressBarCustom buildProgressBar(Progress progress) {
@@ -80,67 +93,25 @@ public final class CollectionProgressSection extends RoundedPanel {
         return progressBar;
     }
 
-    private JLabel buildSummaryLabel(Progress progress) {
-        final var summary = new JLabel(progress.collected() + " coletadas · " + progress.missing() + " faltando");
-        summary.setForeground(Theme.TEXT_SECONDARY);
-        summary.setFont(Theme.FONT_REGULAR.deriveFont(Theme.SIZE_SM));
+    private JPanel buildFooterRow(Progress progress) {
+        final var footerRow = new JPanel(new BorderLayout());
+        footerRow.setOpaque(false);
 
-        return summary;
+        final var missingLabel = buildFooterLabel(progress.missing() + " figurinhas faltando", SwingConstants.LEFT);
+        final var packEstimate = (int) Math.ceil((double) progress.missing() / STICKERS_PER_PACK);
+        final var packLabel = buildFooterLabel("~ " + packEstimate + " pacotes", SwingConstants.RIGHT);
+
+        footerRow.add(missingLabel, BorderLayout.WEST);
+        footerRow.add(packLabel, BorderLayout.EAST);
+
+        return footerRow;
     }
 
-    private JPanel buildSectionProgressPanel(HomeData homeData) {
-        final var sectionPanel = new JPanel();
-        sectionPanel.setOpaque(false);
-        sectionPanel.setLayout(new BoxLayout(sectionPanel, BoxLayout.Y_AXIS));
+    private JLabel buildFooterLabel(String text, int horizontalAlignment) {
+        final var label = new JLabel(text, horizontalAlignment);
+        label.setForeground(Theme.TEXT_SECONDARY);
+        label.setFont(Theme.FONT_REGULAR.deriveFont(Theme.SIZE_SM));
 
-        for (final var section : homeData.sections()) {
-            final var progress = homeData.progressBySection().get(section.getId());
-
-            if (progress != null) {
-                sectionPanel.add(Box.createVerticalStrut(Theme.SPACE_SM));
-                sectionPanel.add(buildSectionProgressRow(section, progress));
-            }
-        }
-
-        return sectionPanel;
-    }
-
-    private JPanel buildSectionProgressRow(Section section, Progress progress) {
-        final var progressRow = new JPanel(new BorderLayout(Theme.SPACE_MD, Theme.SPACE_NONE));
-        progressRow.setOpaque(false);
-
-        final var sectionName = new JLabel(section.getName());
-        sectionName.setForeground(Theme.TEXT_SECONDARY);
-        sectionName.setFont(Theme.FONT_REGULAR.deriveFont(Theme.SIZE_SM));
-        sectionName.setPreferredSize(new Dimension(Theme.SIDEBAR_WIDTH, Theme.SPACE_LG));
-
-        final var progressBar = new ProgressBarCustom();
-        progressBar.setPreferredSize(new Dimension(Theme.SPACE_NONE, Theme.SECTION_PROGRESS_BAR_HEIGHT));
-        progressBar.updateProgress(progress);
-
-        final var progressText = new JLabel(
-            progress.collected() + "/" + progress.total()
-                + "  "
-                + percentageFormat.format(progress.percentage())
-                + "%"
-        );
-        progressText.setForeground(Theme.TEXT_MUTED);
-        progressText.setFont(Theme.FONT_REGULAR.deriveFont(Theme.SIZE_XS));
-        progressText.setHorizontalAlignment(SwingConstants.RIGHT);
-        progressText.setPreferredSize(new Dimension(Theme.SIDEBAR_WIDTH, Theme.SPACE_LG));
-
-        progressRow.add(sectionName, BorderLayout.WEST);
-        progressRow.add(progressBar, BorderLayout.CENTER);
-        progressRow.add(progressText, BorderLayout.EAST);
-
-        return progressRow;
-    }
-
-    private void toggleSectionProgress() {
-        sectionProgressVisible = !sectionProgressVisible;
-        sectionProgressPanel.setVisible(sectionProgressVisible);
-        sectionToggleButton.setText(sectionProgressVisible ? "Ocultar seções" : "Ver por seção");
-        revalidate();
-        repaint();
+        return label;
     }
 }

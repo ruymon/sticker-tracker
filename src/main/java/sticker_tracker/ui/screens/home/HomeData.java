@@ -9,14 +9,14 @@ import sticker_tracker.domain.UserSticker;
 
 public record HomeData(
     Progress progress,
+    HomeMetrics metrics,
+    String whatsAppTradeMessage,
     Map<String, Progress> progressBySection,
     List<UserSticker> recentUserStickers,
-    List<UserSticker> repeatedUserStickers,
     List<Section> sections,
-    Map<String, Sticker> recentStickers,
-    Map<String, Sticker> repeatedStickers
+    Map<String, Sticker> recentStickers
 ) {
     public boolean isEmpty() {
-        return progress.collected() == 0 && recentUserStickers.isEmpty();
+        return progress.total() == 0 && sections.isEmpty();
     }
 }

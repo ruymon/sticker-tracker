@@ -41,7 +41,7 @@ public final class AppFrame extends JFrame {
         contentPanel = new JPanel(cardLayout);
         navigationIndicators = new HashMap<>();
         navigationLabels = new HashMap<>();
-        homeScreen = new HomeScreen();
+        homeScreen = new HomeScreen(() -> showScreen(NavigationConfig.SCREEN_ALBUM));
         albumScreen = new AlbumScreen();
         activeScreenName = NavigationConfig.SCREEN_HOME;
 
@@ -63,13 +63,22 @@ public final class AppFrame extends JFrame {
     private JPanel buildSidebar() {
         final var sidebar = new JPanel();
         sidebar.setPreferredSize(new Dimension(Theme.SIDEBAR_WIDTH, Theme.WINDOW_MIN_HEIGHT));
-        sidebar.setBackground(Theme.BG_SECONDARY);
+        sidebar.setBackground(Theme.BG_CARD);
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
-        sidebar.setBorder(javax.swing.BorderFactory.createEmptyBorder(
-            Theme.SPACE_XL,
-            Theme.SPACE_MD,
-            Theme.SPACE_MD,
-            Theme.SPACE_MD
+        sidebar.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+            javax.swing.BorderFactory.createMatteBorder(
+                Theme.SPACE_NONE,
+                Theme.SPACE_NONE,
+                Theme.SPACE_NONE,
+                1,
+                Theme.BORDER
+            ),
+            javax.swing.BorderFactory.createEmptyBorder(
+                Theme.PAGE_PADDING,
+                Theme.SPACE_MD,
+                Theme.SPACE_MD,
+                Theme.SPACE_MD
+            )
         ));
 
         final var logo = new JLabel(AppConfig.APP_NAME);
@@ -92,7 +101,7 @@ public final class AppFrame extends JFrame {
         final var navigationItem = new JPanel(new BorderLayout(Theme.SPACE_SM, Theme.SPACE_NONE));
         navigationItem.setAlignmentX(LEFT_ALIGNMENT);
         navigationItem.setMaximumSize(new Dimension(Integer.MAX_VALUE, Theme.SPACE_2XL));
-        navigationItem.setBackground(Theme.BG_SECONDARY);
+        navigationItem.setBackground(Theme.BG_CARD);
         navigationItem.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         final var navigationIndicator = new JPanel();
@@ -126,9 +135,14 @@ public final class AppFrame extends JFrame {
     }
 
     public void showScreen(String screenName) {
+        final var screenChanged = !screenName.equals(activeScreenName);
         activeScreenName = screenName;
         cardLayout.show(contentPanel, screenName);
-        refreshActiveScreen();
+
+        if (screenChanged) {
+            refreshActiveScreen();
+        }
+
         refreshNavigation();
     }
 
@@ -147,7 +161,7 @@ public final class AppFrame extends JFrame {
             final var navigationIndicator = navigationIndicatorEntry.getValue();
             final var navigationLabel = navigationLabels.get(screenName);
 
-            navigationIndicator.setBackground(screenIsActive ? Theme.ACCENT : Theme.BG_SECONDARY);
+            navigationIndicator.setBackground(screenIsActive ? Theme.ACCENT : Theme.BG_CARD);
             navigationLabel.setForeground(screenIsActive ? Theme.TEXT_PRIMARY : Theme.TEXT_SECONDARY);
         }
     }

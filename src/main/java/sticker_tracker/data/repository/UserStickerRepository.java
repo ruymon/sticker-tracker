@@ -72,7 +72,7 @@ public final class UserStickerRepository {
         final var sql = """
             SELECT id, sticker_id, quantity, created_at, updated_at
             FROM user_stickers
-            ORDER BY created_at DESC
+            ORDER BY updated_at DESC
             LIMIT ?
             """;
 
