@@ -33,6 +33,11 @@ public class FilterBar extends JPanel {
         this.onFilterChange = callback;
     }
 
+    public void setActiveFilter(Filter activeFilter) {
+        this.activeFilter = activeFilter;
+        refreshButtonStates();
+    }
+
     private void buildFilters() {
         for (final var filter : Filter.values()) {
             final var button = new RoundedButton(labelFor(filter), RoundedButton.Variant.SECONDARY);

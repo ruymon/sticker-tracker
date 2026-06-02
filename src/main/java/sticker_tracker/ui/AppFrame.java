@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -14,9 +13,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 import sticker_tracker.config.AppConfig;
 import sticker_tracker.config.NavigationConfig;
+import sticker_tracker.ui.screens.album.AlbumScreen;
 import sticker_tracker.ui.screens.home.HomeScreen;
 
 public final class AppFrame extends JFrame {
@@ -25,6 +24,8 @@ public final class AppFrame extends JFrame {
     private final JPanel contentPanel;
     private final Map<String, JPanel> navigationIndicators;
     private final Map<String, JLabel> navigationLabels;
+    private final HomeScreen homeScreen;
+    private final AlbumScreen albumScreen;
 
     private String activeScreenName;
 
@@ -40,6 +41,8 @@ public final class AppFrame extends JFrame {
         contentPanel = new JPanel(cardLayout);
         navigationIndicators = new HashMap<>();
         navigationLabels = new HashMap<>();
+        homeScreen = new HomeScreen();
+        albumScreen = new AlbumScreen();
         activeScreenName = NavigationConfig.SCREEN_HOME;
 
         buildLayout();
@@ -47,8 +50,8 @@ public final class AppFrame extends JFrame {
 
     private void buildLayout() {
         contentPanel.setBackground(Theme.BG_PRIMARY);
-        contentPanel.add(new HomeScreen(), NavigationConfig.SCREEN_HOME);
-        contentPanel.add(buildPlaceholderScreen(NavigationConfig.SCREEN_ALBUM_LABEL), NavigationConfig.SCREEN_ALBUM);
+        contentPanel.add(homeScreen, NavigationConfig.SCREEN_HOME);
+        contentPanel.add(albumScreen, NavigationConfig.SCREEN_ALBUM);
 
         setLayout(new BorderLayout());
         add(buildSidebar(), BorderLayout.WEST);
@@ -122,22 +125,17 @@ public final class AppFrame extends JFrame {
         return slogan;
     }
 
-    private JPanel buildPlaceholderScreen(String title) {
-        final var screen = new JPanel(new FlowLayout(FlowLayout.LEFT, Theme.SPACE_XL, Theme.SPACE_XL));
-        screen.setBackground(Theme.BG_PRIMARY);
-
-        final var titleLabel = new JLabel(title, SwingConstants.LEFT);
-        titleLabel.setForeground(Theme.TEXT_PRIMARY);
-        titleLabel.setFont(Theme.FONT_BOLD.deriveFont(Theme.SIZE_XL));
-        screen.add(titleLabel);
-
-        return screen;
-    }
-
     public void showScreen(String screenName) {
         activeScreenName = screenName;
         cardLayout.show(contentPanel, screenName);
+        refreshActiveScreen();
         refreshNavigation();
+    }
+
+    private void refreshActiveScreen() {
+        if (NavigationConfig.SCREEN_HOME.equals(activeScreenName)) {
+            homeScreen.refreshData();
+        }
     }
 
     private void refreshNavigation() {
