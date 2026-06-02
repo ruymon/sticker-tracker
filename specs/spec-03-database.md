@@ -94,26 +94,11 @@ VALUES ('00000000-0000-0000-0000-000000000001', 'Panini FIFA World Cup 2026');
 
 ### `02-seed-sections.sql`
 
-Inserir todas as seções derivadas do catálogo Panini WC 2026.
-Fonte: https://github.com/danieltartaro/sticker-swap/blob/main/data/raw/panini-wc-2026-catalog.json
 
 ```sql
 INSERT IGNORE INTO sections (id, collection_id, prefix, name, type, flag_asset, display_order) VALUES
 ('sec-00000001', '00000000-0000-0000-0000-000000000001', '00',     'We Are Panini',           'special',  NULL,        1),
-('sec-00000002', '00000000-0000-0000-0000-000000000001', 'FWC',    'FIFA World Cup 2026',     'special',  NULL,        2),
-('sec-00000003', '00000000-0000-0000-0000-000000000001', 'MEX',    'Mexico',                  'team',     'MEX.png',   3),
-('sec-00000004', '00000000-0000-0000-0000-000000000001', 'RSA',    'South Africa',            'team',     'RSA.png',   4),
-('sec-00000005', '00000000-0000-0000-0000-000000000001', 'KOR',    'South Korea',             'team',     'KOR.png',   5),
-('sec-00000006', '00000000-0000-0000-0000-000000000001', 'CZE',    'Czechia',                 'team',     'CZE.png',   6),
-('sec-00000007', '00000000-0000-0000-0000-000000000001', 'CAN',    'Canada',                  'team',     'CAN.png',   7),
-('sec-00000008', '00000000-0000-0000-0000-000000000001', 'BIH',    'Bosnia and Herzegovina',  'team',     'BIH.png',   8),
-('sec-00000009', '00000000-0000-0000-0000-000000000001', 'QAT',    'Qatar',                   'team',     'QAT.png',   9),
-('sec-00000010', '00000000-0000-0000-0000-000000000001', 'SUI',    'Switzerland',             'team',     'SUI.png',   10),
-('sec-00000011', '00000000-0000-0000-0000-000000000001', 'BRA',    'Brazil',                  'team',     'BRA.png',   11),
-('sec-00000012', '00000000-0000-0000-0000-000000000001', 'MAR',    'Morocco',                 'team',     'MAR.png',   12),
--- continuar para todos os 50+ times/seções do catálogo
--- gerar o INSERT completo a partir do JSON em:
--- https://raw.githubusercontent.com/danieltartaro/sticker-swap/refs/heads/main/data/raw/panini-wc-2026-catalog.json
+-- Deixar em branco o resto. O desenvolvedor irá preencher manualmente.
 ;
 ```
 
