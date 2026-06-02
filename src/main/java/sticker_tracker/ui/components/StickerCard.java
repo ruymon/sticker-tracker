@@ -1,12 +1,14 @@
 package sticker_tracker.ui.components;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,7 +28,7 @@ public class StickerCard extends RoundedPanel {
     private static final Map<String, ImageIcon> IMAGE_CACHE = new ConcurrentHashMap<>();
     private static final String QUANTITY_BADGE_PREFIX = "x";
     private static final String TRUNCATED_TEXT_SUFFIX = "…";
-    private static final int REPEATED_QUANTITY_MINIMUM = 2;
+    private static final float BORDER_WIDTH = 2f;
 
     private final Sticker sticker;
     private final boolean collected;
@@ -46,7 +48,7 @@ public class StickerCard extends RoundedPanel {
     private void buildCard() {
         setLayout(new BorderLayout(Theme.SPACE_NONE, Theme.SPACE_XS));
         setBorder(BorderFactory.createEmptyBorder(
-            Theme.SPACE_SM,
+            Theme.SPACE_MD,
             Theme.SPACE_SM,
             Theme.SPACE_SM,
             Theme.SPACE_SM
@@ -92,16 +94,19 @@ public class StickerCard extends RoundedPanel {
         final var infoArea = new JPanel();
         infoArea.setOpaque(false);
         infoArea.setLayout(new BoxLayout(infoArea, BoxLayout.Y_AXIS));
+        infoArea.setAlignmentX(LEFT_ALIGNMENT);
 
         final var codeRow = new JPanel(new BorderLayout());
         codeRow.setOpaque(false);
+        codeRow.setAlignmentX(LEFT_ALIGNMENT);
+        codeRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, Theme.SPACE_MD));
 
         final var codeLabel = new JLabel(sticker.getCode());
         codeLabel.setFont(Theme.FONT_MONO.deriveFont(Theme.SIZE_XS));
         codeLabel.setForeground(Theme.TEXT_MUTED);
         codeRow.add(codeLabel, BorderLayout.WEST);
 
-        if (quantity >= REPEATED_QUANTITY_MINIMUM) {
+        if (quantity > 0) {
             final var quantityBadge = new JLabel(QUANTITY_BADGE_PREFIX + quantity);
             quantityBadge.setFont(Theme.FONT_MONO.deriveFont(Theme.SIZE_XS));
             quantityBadge.setForeground(Theme.ACCENT);
@@ -109,14 +114,41 @@ public class StickerCard extends RoundedPanel {
         }
 
         final var nameLabel = new JLabel(truncate(sticker.getName()));
+        nameLabel.setAlignmentX(LEFT_ALIGNMENT);
+        nameLabel.setHorizontalAlignment(SwingConstants.LEFT);
         nameLabel.setToolTipText(sticker.getName());
         nameLabel.setFont(Theme.FONT_REGULAR.deriveFont(Theme.SIZE_XS));
         nameLabel.setForeground(collected ? Theme.TEXT_PRIMARY : Theme.TEXT_MUTED);
 
+        final var nameRow = new JPanel(new BorderLayout());
+        nameRow.setOpaque(false);
+        nameRow.setAlignmentX(LEFT_ALIGNMENT);
+        nameRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, Theme.SPACE_MD));
+        nameRow.add(nameLabel, BorderLayout.WEST);
+
         infoArea.add(codeRow);
-        infoArea.add(nameLabel);
+        infoArea.add(nameRow);
 
         return infoArea;
+    }
+
+    @Override
+    protected void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+
+        final var graphics2d = (Graphics2D) graphics.create();
+        graphics2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics2d.setStroke(new BasicStroke(BORDER_WIDTH));
+        graphics2d.setColor(collected ? Theme.ACCENT : Theme.BORDER);
+        graphics2d.drawRoundRect(
+            1,
+            1,
+            getWidth() - 3,
+            getHeight() - 3,
+            Theme.RADIUS_MD,
+            Theme.RADIUS_MD
+        );
+        graphics2d.dispose();
     }
 
     private void loadImageAsync(String imageUrl, JLabel imageLabel) {
