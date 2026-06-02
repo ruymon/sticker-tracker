@@ -64,6 +64,10 @@ public final class Theme {
     public static final int STICKER_IMAGE_SIZE = 80;
     public static final int STICKER_NAME_MAXIMUM_LENGTH = 18;
     public static final int PROGRESS_BAR_HEIGHT = 8;
+    public static final int SECTION_PROGRESS_BAR_HEIGHT = 4;
+    public static final int REPEATED_LIST_ROW_HEIGHT = 36;
+    public static final int REPEATED_LIST_VISIBLE_ROWS = 5;
+    public static final int COPY_FEEDBACK_DURATION_MS = 2000;
     public static final int SCROLL_BAR_WIDTH = 6;
     public static final int SCROLL_UNIT_INCREMENT = 16;
     public static final int WRAP_LAYOUT_SCROLL_ADJUSTMENT = 1;
