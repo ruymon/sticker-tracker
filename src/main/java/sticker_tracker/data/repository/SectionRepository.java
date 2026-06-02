@@ -35,8 +35,8 @@ public final class SectionRepository {
             }
 
             return sections;
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar seções: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar seções: " + exception.getMessage(), exception);
         }
     }
 
@@ -60,8 +60,8 @@ public final class SectionRepository {
 
                 return sections;
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar seções por coleção: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar seções por coleção: " + exception.getMessage(), exception);
         }
     }
 
@@ -86,8 +86,8 @@ public final class SectionRepository {
 
                 return Optional.empty();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar seção por prefixo: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar seção por prefixo: " + exception.getMessage(), exception);
         }
     }
 
@@ -96,12 +96,12 @@ public final class SectionRepository {
             INSERT INTO sections (id, collection_id, prefix, name, type, flag_asset, display_order)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """;
-        final var id = section.getId() == null || section.getId().isBlank()
+        final var sectionId = section.getId() == null || section.getId().isBlank()
             ? UUID.randomUUID().toString()
             : section.getId();
 
         try (final var statement = db.getConnection().prepareStatement(sql)) {
-            statement.setString(1, id);
+            statement.setString(1, sectionId);
             statement.setString(2, section.getCollectionId());
             statement.setString(3, section.getPrefix());
             statement.setString(4, section.getName());
@@ -109,8 +109,8 @@ public final class SectionRepository {
             statement.setString(6, section.getFlagAsset());
             statement.setInt(7, section.getDisplayOrder());
             statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao criar seção: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao criar seção: " + exception.getMessage(), exception);
         }
     }
 

@@ -5,12 +5,12 @@ public enum SectionType {
     SPECIAL,
     REGIONAL;
 
-    public static SectionType fromString(String value) {
-        return switch (value.toLowerCase()) {
+    public static SectionType fromString(String sectionTypeValue) {
+        return switch (sectionTypeValue.toLowerCase()) {
             case "team" -> TEAM;
             case "special" -> SPECIAL;
             case "regional" -> REGIONAL;
-            default -> throw new IllegalArgumentException("Unknown section type: " + value);
+            default -> throw new IllegalArgumentException("Unknown section type: " + sectionTypeValue);
         };
     }
 }

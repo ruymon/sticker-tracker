@@ -29,7 +29,7 @@ public final class Main {
         UIManager.put("Component.arc", Theme.RADIUS_MD);
         UIManager.put("TextComponent.arc", Theme.RADIUS_MD);
         UIManager.put("ScrollBar.thumbArc", Theme.RADIUS_SM);
-        UIManager.put("ScrollBar.width", 6);
+        UIManager.put("ScrollBar.width", Theme.SCROLL_BAR_WIDTH);
         UIManager.put("ScrollBar.thumb", Theme.BG_HOVER);
         UIManager.put("TextField.background", Theme.BG_SECONDARY);
         UIManager.put("TextField.foreground", Theme.TEXT_PRIMARY);

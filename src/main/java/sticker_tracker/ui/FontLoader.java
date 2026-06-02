@@ -6,6 +6,8 @@ import java.io.IOException;
 
 public final class FontLoader {
 
+    private static final String FALLBACK_FONT_NAME = "SansSerif";
+
     private FontLoader() {}
 
     public static void load() {
@@ -26,9 +28,9 @@ public final class FontLoader {
             GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
 
             return font;
-        } catch (Exception e) {
+        } catch (Exception exception) {
             System.err.println("Font not found: " + path + " - using fallback");
-            return new Font("SansSerif", Font.PLAIN, 14);
+            return new Font(FALLBACK_FONT_NAME, Font.PLAIN, (int) Theme.SIZE_BASE);
         }
     }
 }

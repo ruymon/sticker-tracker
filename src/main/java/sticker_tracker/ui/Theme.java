@@ -26,6 +26,7 @@ public final class Theme {
     public static final Color SUCCESS = Color.decode("#22C55E");
     public static final Color WARNING = Color.decode("#EAB308");
     public static final Color DANGER = Color.decode("#EF4444");
+    public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 
     public static Font FONT_REGULAR;
     public static Font FONT_MEDIUM;
@@ -52,4 +53,23 @@ public final class Theme {
     public static final int RADIUS_MD = 12;
     public static final int RADIUS_LG = 16;
     public static final int RADIUS_XL = 24;
+
+    public static final int WINDOW_MIN_WIDTH = 1100;
+    public static final int WINDOW_MIN_HEIGHT = 720;
+    public static final int SIDEBAR_WIDTH = 220;
+    public static final int SPACE_NONE = 0;
+    public static final int NAVIGATION_INDICATOR_WIDTH = 3;
+    public static final int STICKER_CARD_WIDTH = 100;
+    public static final int STICKER_CARD_HEIGHT = 140;
+    public static final int STICKER_IMAGE_SIZE = 80;
+    public static final int STICKER_NAME_MAXIMUM_LENGTH = 18;
+    public static final int PROGRESS_BAR_HEIGHT = 8;
+    public static final int SCROLL_BAR_WIDTH = 6;
+    public static final int SCROLL_UNIT_INCREMENT = 16;
+    public static final int WRAP_LAYOUT_SCROLL_ADJUSTMENT = 1;
+    public static final int WRAP_LAYOUT_DOUBLE_GAP_MULTIPLIER = 2;
+
+    public static final float DISABLED_ALPHA = 0.35f;
+    public static final double PERCENTAGE_EMPTY = 0.0;
+    public static final double PERCENTAGE_FULL = 100.0;
 }

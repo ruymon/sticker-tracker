@@ -6,11 +6,11 @@ import java.sql.SQLException;
 
 public final class DatabaseConnection {
 
-    private static final String HOST = findEnv("DB_HOST", "localhost");
-    private static final String PORT = findEnv("DB_PORT", "3306");
-    private static final String DATABASE = findEnv("DB_DATABASE", "sticker_tracker");
-    private static final String USER = findEnv("DB_USERNAME", "root");
-    private static final String PASSWORD = findEnv("DB_PASSWORD", "root");
+    private static final String HOST = findEnvironmentValue("DB_HOST", "localhost");
+    private static final String PORT = findEnvironmentValue("DB_PORT", "3306");
+    private static final String DATABASE = findEnvironmentValue("DB_DATABASE", "sticker_tracker");
+    private static final String USER = findEnvironmentValue("DB_USERNAME", "root");
+    private static final String PASSWORD = findEnvironmentValue("DB_PASSWORD", "root");
     private static final String URL = "jdbc:mysql://" + HOST + ":" + PORT + "/" + DATABASE
         + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
 
@@ -35,7 +35,7 @@ public final class DatabaseConnection {
             if (connection == null || connection.isClosed()) {
                 connect();
             }
-        } catch (SQLException e) {
+        } catch (SQLException exception) {
             connect();
         }
 
@@ -46,18 +46,18 @@ public final class DatabaseConnection {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
-        } catch (Exception e) {
-            throw new RuntimeException("Falha ao conectar ao banco: " + e.getMessage());
+        } catch (Exception exception) {
+            throw new RuntimeException("Falha ao conectar ao banco: " + exception.getMessage());
         }
     }
 
-    private static String findEnv(String name, String fallback) {
-        final var value = System.getenv(name);
+    private static String findEnvironmentValue(String name, String fallback) {
+        final var environmentValue = System.getenv(name);
 
-        if (value == null || value.isBlank()) {
+        if (environmentValue == null || environmentValue.isBlank()) {
             return fallback;
         }
 
-        return value;
+        return environmentValue;
     }
 }

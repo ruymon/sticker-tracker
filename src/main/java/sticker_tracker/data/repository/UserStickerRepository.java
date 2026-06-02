@@ -12,6 +12,10 @@ import sticker_tracker.infra.db.DatabaseConnection;
 
 public final class UserStickerRepository {
 
+    private static final int MISSING_QUANTITY = 0;
+    private static final int COLLECTED_QUANTITY = 1;
+    private static final int QUANTITY_STEP = 1;
+
     private final DatabaseConnection db;
 
     public UserStickerRepository(DatabaseConnection db) {
@@ -34,8 +38,8 @@ public final class UserStickerRepository {
             }
 
             return userStickers;
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar figurinhas do usuário: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar figurinhas do usuário: " + exception.getMessage(), exception);
         }
     }
 
@@ -43,21 +47,24 @@ public final class UserStickerRepository {
         final var sql = """
             SELECT id, sticker_id, quantity, created_at, updated_at
             FROM user_stickers
-            WHERE quantity > 1
+            WHERE quantity > ?
             ORDER BY quantity DESC, updated_at DESC
             """;
 
-        try (final var statement = db.getConnection().prepareStatement(sql);
-             final var result = statement.executeQuery()) {
-            final var userStickers = new ArrayList<UserSticker>();
+        try (final var statement = db.getConnection().prepareStatement(sql)) {
+            statement.setInt(1, COLLECTED_QUANTITY);
 
-            while (result.next()) {
-                userStickers.add(mapUserSticker(result));
+            try (final var result = statement.executeQuery()) {
+                final var userStickers = new ArrayList<UserSticker>();
+
+                while (result.next()) {
+                    userStickers.add(mapUserSticker(result));
+                }
+
+                return userStickers;
             }
-
-            return userStickers;
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar figurinhas repetidas: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar figurinhas repetidas: " + exception.getMessage(), exception);
         }
     }
 
@@ -81,8 +88,8 @@ public final class UserStickerRepository {
 
                 return userStickers;
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar figurinhas recentes: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar figurinhas recentes: " + exception.getMessage(), exception);
         }
     }
 
@@ -103,80 +110,83 @@ public final class UserStickerRepository {
 
                 return Optional.empty();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar figurinha do usuário: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar figurinha do usuário: " + exception.getMessage(), exception);
         }
     }
 
     public void createUserSticker(String stickerId) {
         final var sql = """
             INSERT INTO user_stickers (id, sticker_id, quantity)
-            VALUES (?, ?, 1)
+            VALUES (?, ?, ?)
             """;
 
         try (final var statement = db.getConnection().prepareStatement(sql)) {
             statement.setString(1, UUID.randomUUID().toString());
             statement.setString(2, stickerId);
+            statement.setInt(3, COLLECTED_QUANTITY);
             statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao criar figurinha do usuário: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao criar figurinha do usuário: " + exception.getMessage(), exception);
         }
     }
 
     public void updateIncrementQuantity(String stickerId) {
-        final var current = findByStickerId(stickerId);
+        final var currentUserSticker = findByStickerId(stickerId);
 
-        if (current.isEmpty()) {
+        if (currentUserSticker.isEmpty()) {
             createUserSticker(stickerId);
             return;
         }
 
         final var sql = """
             UPDATE user_stickers
-            SET quantity = quantity + 1
+            SET quantity = quantity + ?
             WHERE sticker_id = ?
             """;
 
         try (final var statement = db.getConnection().prepareStatement(sql)) {
-            statement.setString(1, stickerId);
+            statement.setInt(1, QUANTITY_STEP);
+            statement.setString(2, stickerId);
             statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao incrementar quantidade: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao incrementar quantidade: " + exception.getMessage(), exception);
         }
     }
 
     public void updateDecrementQuantity(String stickerId) {
-        final var current = findByStickerId(stickerId);
+        final var currentUserSticker = findByStickerId(stickerId);
 
-        current.ifPresent(userSticker -> {
-            if (userSticker.getQuantity() == 1) {
+        currentUserSticker.ifPresent(userSticker -> {
+            if (userSticker.getQuantity() == COLLECTED_QUANTITY) {
                 deleteUserSticker(userSticker.getId());
             } else {
                 final var sql = """
                     UPDATE user_stickers
-                    SET quantity = quantity - 1
+                    SET quantity = quantity - ?
                     WHERE sticker_id = ?
                     """;
 
                 try (final var statement = db.getConnection().prepareStatement(sql)) {
-                    statement.setString(1, stickerId);
+                    statement.setInt(1, QUANTITY_STEP);
+                    statement.setString(2, stickerId);
                     statement.executeUpdate();
-                } catch (SQLException e) {
-                    throw new RuntimeException("Falha ao decrementar quantidade: " + e.getMessage(), e);
+                } catch (SQLException exception) {
+                    throw new RuntimeException("Falha ao decrementar quantidade: " + exception.getMessage(), exception);
                 }
             }
         });
     }
 
     public void updateQuantity(String stickerId, int quantity) {
-        if (quantity <= 0) {
+        if (quantity <= MISSING_QUANTITY) {
             findByStickerId(stickerId).ifPresent(userSticker -> deleteUserSticker(userSticker.getId()));
             return;
         }
 
-        final var current = findByStickerId(stickerId);
+        final var currentUserSticker = findByStickerId(stickerId);
 
-        if (current.isEmpty()) {
+        if (currentUserSticker.isEmpty()) {
             createUserSticker(stickerId);
         }
 
@@ -190,8 +200,8 @@ public final class UserStickerRepository {
             statement.setInt(1, quantity);
             statement.setString(2, stickerId);
             statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao atualizar quantidade: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao atualizar quantidade: " + exception.getMessage(), exception);
         }
     }
 
@@ -204,8 +214,8 @@ public final class UserStickerRepository {
         try (final var statement = db.getConnection().prepareStatement(sql)) {
             statement.setString(1, id);
             statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao deletar figurinha do usuário: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao deletar figurinha do usuário: " + exception.getMessage(), exception);
         }
     }
 

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 public final class UserSticker {
 
+    private static final int COLLECTED_QUANTITY = 1;
+
     private final String id;
     private final String stickerId;
     private final int quantity;
@@ -45,10 +47,10 @@ public final class UserSticker {
     }
 
     public boolean isRepeated() {
-        return quantity > 1;
+        return quantity > COLLECTED_QUANTITY;
     }
 
     public int repeatedCount() {
-        return quantity - 1;
+        return quantity - COLLECTED_QUANTITY;
     }
 }

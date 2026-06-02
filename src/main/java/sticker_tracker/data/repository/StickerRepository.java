@@ -37,8 +37,8 @@ public final class StickerRepository {
             }
 
             return stickers;
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar figurinhas: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar figurinhas: " + exception.getMessage(), exception);
         }
     }
 
@@ -62,18 +62,27 @@ public final class StickerRepository {
 
                 return stickers;
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar figurinhas por seção: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar figurinhas por seção: " + exception.getMessage(), exception);
         }
     }
 
     public List<Sticker> findByCollection(String collectionId) {
         final var sql = """
-            SELECT s.id, s.collection_id, s.section_id, s.code, s.number, s.name, s.image_url, s.created_at, s.updated_at
-            FROM stickers s
-            JOIN sections sec ON sec.id = s.section_id
-            WHERE s.collection_id = ?
-            ORDER BY sec.display_order, s.number, s.code
+            SELECT
+                stickers.id,
+                stickers.collection_id,
+                stickers.section_id,
+                stickers.code,
+                stickers.number,
+                stickers.name,
+                stickers.image_url,
+                stickers.created_at,
+                stickers.updated_at
+            FROM stickers
+            JOIN sections ON sections.id = stickers.section_id
+            WHERE stickers.collection_id = ?
+            ORDER BY sections.display_order, stickers.number, stickers.code
             """;
 
         try (final var statement = db.getConnection().prepareStatement(sql)) {
@@ -88,8 +97,8 @@ public final class StickerRepository {
 
                 return stickers;
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar figurinhas por coleção: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar figurinhas por coleção: " + exception.getMessage(), exception);
         }
     }
 
@@ -110,8 +119,8 @@ public final class StickerRepository {
 
                 return Optional.empty();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar figurinha por id: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar figurinha por id: " + exception.getMessage(), exception);
         }
     }
 
@@ -134,19 +143,19 @@ public final class StickerRepository {
 
                 return Optional.empty();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar figurinha por código: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar figurinha por código: " + exception.getMessage(), exception);
         }
     }
 
     public Progress findProgress(String collectionId) {
         final var sql = """
             SELECT
-                COUNT(DISTINCT s.id)          AS total,
-                COUNT(DISTINCT us.sticker_id) AS collected
-            FROM stickers s
-            LEFT JOIN user_stickers us ON us.sticker_id = s.id
-            WHERE s.collection_id = ?
+                COUNT(DISTINCT stickers.id)               AS total,
+                COUNT(DISTINCT user_stickers.sticker_id)  AS collected
+            FROM stickers
+            LEFT JOIN user_stickers ON user_stickers.sticker_id = stickers.id
+            WHERE stickers.collection_id = ?
             """;
 
         try (final var statement = db.getConnection().prepareStatement(sql)) {
@@ -162,23 +171,23 @@ public final class StickerRepository {
 
                 return new Progress(0, 0);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar progresso: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar progresso: " + exception.getMessage(), exception);
         }
     }
 
     public Map<String, Progress> findProgressBySection(String collectionId) {
         final var sql = """
             SELECT
-                sec.id,
-                COUNT(DISTINCT s.id)          AS total,
-                COUNT(DISTINCT us.sticker_id) AS collected
-            FROM sections sec
-            JOIN stickers s ON s.section_id = sec.id
-            LEFT JOIN user_stickers us ON us.sticker_id = s.id
-            WHERE sec.collection_id = ?
-            GROUP BY sec.id
-            ORDER BY sec.display_order
+                sections.id,
+                COUNT(DISTINCT stickers.id)              AS total,
+                COUNT(DISTINCT user_stickers.sticker_id) AS collected
+            FROM sections
+            JOIN stickers ON stickers.section_id = sections.id
+            LEFT JOIN user_stickers ON user_stickers.sticker_id = stickers.id
+            WHERE sections.collection_id = ?
+            GROUP BY sections.id
+            ORDER BY sections.display_order
             """;
 
         try (final var statement = db.getConnection().prepareStatement(sql)) {
@@ -196,8 +205,8 @@ public final class StickerRepository {
 
                 return progressBySection;
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar progresso por seção: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar progresso por seção: " + exception.getMessage(), exception);
         }
     }
 
@@ -206,12 +215,12 @@ public final class StickerRepository {
             INSERT INTO stickers (id, collection_id, section_id, code, number, name, image_url)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """;
-        final var id = sticker.getId() == null || sticker.getId().isBlank()
+        final var stickerId = sticker.getId() == null || sticker.getId().isBlank()
             ? UUID.randomUUID().toString()
             : sticker.getId();
 
         try (final var statement = db.getConnection().prepareStatement(sql)) {
-            statement.setString(1, id);
+            statement.setString(1, stickerId);
             statement.setString(2, sticker.getCollectionId());
             statement.setString(3, sticker.getSectionId());
             statement.setString(4, sticker.getCode());
@@ -219,8 +228,8 @@ public final class StickerRepository {
             statement.setString(6, sticker.getName());
             statement.setString(7, sticker.getImageUrl());
             statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao criar figurinha: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao criar figurinha: " + exception.getMessage(), exception);
         }
     }
 
@@ -248,12 +257,12 @@ public final class StickerRepository {
         return timestamp.toLocalDateTime();
     }
 
-    private void setNullableInteger(java.sql.PreparedStatement statement, int index, Integer value)
+    private void setNullableInteger(java.sql.PreparedStatement statement, int parameterIndex, Integer integerValue)
         throws SQLException {
-        if (value == null) {
-            statement.setNull(index, java.sql.Types.INTEGER);
+        if (integerValue == null) {
+            statement.setNull(parameterIndex, java.sql.Types.INTEGER);
         } else {
-            statement.setInt(index, value);
+            statement.setInt(parameterIndex, integerValue);
         }
     }
 }

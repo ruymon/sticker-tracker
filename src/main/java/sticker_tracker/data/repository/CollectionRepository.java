@@ -34,8 +34,8 @@ public final class CollectionRepository {
             }
 
             return collections;
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar álbuns: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar álbuns: " + exception.getMessage(), exception);
         }
     }
 
@@ -56,8 +56,8 @@ public final class CollectionRepository {
 
                 return Optional.empty();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar coleção por id: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao buscar coleção por id: " + exception.getMessage(), exception);
         }
     }
 
@@ -66,16 +66,16 @@ public final class CollectionRepository {
             INSERT INTO collections (id, name)
             VALUES (?, ?)
             """;
-        final var id = collection.getId() == null || collection.getId().isBlank()
+        final var collectionId = collection.getId() == null || collection.getId().isBlank()
             ? UUID.randomUUID().toString()
             : collection.getId();
 
         try (final var statement = db.getConnection().prepareStatement(sql)) {
-            statement.setString(1, id);
+            statement.setString(1, collectionId);
             statement.setString(2, collection.getName());
             statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao criar coleção: " + e.getMessage(), e);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Falha ao criar coleção: " + exception.getMessage(), exception);
         }
     }
 
