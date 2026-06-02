@@ -7,6 +7,7 @@
   title: "",
   subtitle: "",
   course: "[preencher curso]",
+  division: "[preencher divisão]",
   authors: (),
   submission-date: none,
   language: "pt",

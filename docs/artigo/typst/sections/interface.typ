@@ -10,6 +10,23 @@ Os componentes foram pensados de forma atômica. `RoundedButton` e `RoundedPanel
 
 Na tela inicial, o sistema apresenta o progresso geral da coleção, estatísticas de coletadas, faltantes e repetidas, estimativa de envelopes, gasto estimado, progresso por times e atividade recente. A Home foi organizada como um painel de acompanhamento, não apenas como uma lista de figurinhas. Na tela de álbum, o usuário visualiza as seções ordenadas, busca por código ou nome, filtra por status e altera a quantidade de cada figurinha por meio de um diálogo próprio. Essa separação aproxima a Home de uma visão gerencial e o Álbum de uma área de operação.
 
+#set par(first-line-indent: 0pt)
+#figure(
+  image("../assets/app-visao-geral.png", width: 100%),
+  caption: [Tela Visão Geral com progresso do álbum, métricas, times e atividade recente.]
+)
+
+#figure(
+  image("../assets/app-album-filtros.png", width: 100%),
+  caption: [Tela Álbum com filtros por status, busca e grade de figurinhas agrupadas por seção.]
+)
+
+#figure(
+  image("../assets/app-album-dialogo-quantidade.png", width: 100%),
+  caption: [Diálogo de quantidade aberto sobre a tela do Álbum, com controles de incremento e decremento.]
+)
+#set par(first-line-indent: 1.25cm)
+
 A divisão entre `sections` e `components` foi essencial para controlar o crescimento da interface. Os componentes compartilhados resolvem problemas repetidos de layout e estilo, como cartões, botões, badges, campos e barras de progresso. Já as seções organizam partes maiores da tela, como cabeçalho, barra de filtros, grade do álbum, estatísticas e atividade. Assim, uma mudança visual em um botão ou card não exige editar cada tela, e uma mudança de composição de tela não altera a implementação interna dos componentes.
 
 Elementos customizados, como bordas arredondadas, cartões, barras de progresso e opacidade de figurinhas não coletadas, foram desenhados com `paintComponent()` e `Graphics2D`. Dessa forma, a interface preserva uma aparência mais cuidada sem depender de ferramentas visuais de geração automática.
