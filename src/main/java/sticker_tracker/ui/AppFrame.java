@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import sticker_tracker.config.AppConfig;
 import sticker_tracker.config.NavigationConfig;
+import sticker_tracker.ui.screens.home.HomeScreen;
 
 public final class AppFrame extends JFrame {
 
@@ -46,7 +47,7 @@ public final class AppFrame extends JFrame {
 
     private void buildLayout() {
         contentPanel.setBackground(Theme.BG_PRIMARY);
-        contentPanel.add(buildPlaceholderScreen(NavigationConfig.SCREEN_HOME_LABEL), NavigationConfig.SCREEN_HOME);
+        contentPanel.add(new HomeScreen(), NavigationConfig.SCREEN_HOME);
         contentPanel.add(buildPlaceholderScreen(NavigationConfig.SCREEN_ALBUM_LABEL), NavigationConfig.SCREEN_ALBUM);
 
         setLayout(new BorderLayout());
