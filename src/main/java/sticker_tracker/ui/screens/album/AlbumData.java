@@ -22,6 +22,10 @@ public record AlbumData(
         return stickers.size();
     }
 
+    public AlbumData withCollectedUserStickers(List<UserSticker> updatedCollectedUserStickers) {
+        return new AlbumData(collectionName, sections, stickers, updatedCollectedUserStickers);
+    }
+
     public Map<String, UserSticker> collectedByStickerId() {
         return collectedUserStickers.stream()
             .collect(Collectors.toMap(

@@ -3,11 +3,11 @@ package sticker_tracker.ui.screens.album.sections;
 import java.awt.BorderLayout;
 import java.util.function.Consumer;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import sticker_tracker.ui.Theme;
 import sticker_tracker.ui.components.FilterBar;
+import sticker_tracker.ui.components.RoundedTextField;
 
 public final class AlbumToolbarSection extends JPanel {
 
@@ -25,10 +25,8 @@ public final class AlbumToolbarSection extends JPanel {
         filterBar.setActiveFilter(activeFilter);
         filterBar.setOnFilterChange(onFilterChange);
 
-        final var searchField = new JTextField(searchTerm, 18);
+        final var searchField = new RoundedTextField(searchTerm, 18);
         searchField.putClientProperty("JTextField.placeholderText", "Buscar");
-        searchField.setForeground(Theme.TEXT_PRIMARY);
-        searchField.setFont(Theme.FONT_REGULAR.deriveFont(Theme.SIZE_BASE));
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent documentEvent) {

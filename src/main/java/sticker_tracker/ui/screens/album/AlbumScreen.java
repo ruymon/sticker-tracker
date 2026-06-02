@@ -4,9 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -98,22 +101,18 @@ public final class AlbumScreen extends JPanel {
         contentPanel.setBackground(Theme.BG_PRIMARY);
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(
-            Theme.SPACE_XL,
-            Theme.SPACE_XL,
-            Theme.SPACE_XL,
-            Theme.SPACE_XL
+            Theme.PAGE_PADDING,
+            Theme.PAGE_PADDING,
+            Theme.PAGE_PADDING,
+            Theme.PAGE_PADDING
         ));
 
         gridPanel = new JPanel(new BorderLayout());
         gridPanel.setOpaque(false);
         gridPanel.setAlignmentX(LEFT_ALIGNMENT);
 
-        contentPanel.add(new AlbumHeaderSection(
-            albumData.collectionName(),
-            albumData.collectedCount(),
-            albumData.totalCount()
-        ));
-        contentPanel.add(Box.createVerticalStrut(Theme.SPACE_MD));
+        contentPanel.add(new AlbumHeaderSection(albumData.collectionName()));
+        contentPanel.add(Box.createVerticalStrut(Theme.SPACE_LG));
         contentPanel.add(new AlbumToolbarSection(
             activeFilter,
             searchTerm,
@@ -238,7 +237,62 @@ public final class AlbumScreen extends JPanel {
     }
 
     private void saveStickerQuantity(String stickerId, int quantity) {
-        albumDataLoader.saveQuantity(stickerId, quantity, this::refreshAlbum, exception -> showErrorState());
+        if (currentAlbumData == null) {
+            albumDataLoader.saveQuantity(stickerId, quantity, this::refreshAlbum, exception -> showErrorState());
+            return;
+        }
+
+        final var previousAlbumData = currentAlbumData;
+        applyStickerQuantityLocally(stickerId, quantity);
+
+        albumDataLoader.saveQuantity(
+            stickerId,
+            quantity,
+            () -> {},
+            exception -> {
+                currentAlbumData = previousAlbumData;
+                refreshGrid();
+                showErrorState();
+            }
+        );
+    }
+
+    private void applyStickerQuantityLocally(String stickerId, int quantity) {
+        final var updatedUserStickers = new ArrayList<UserSticker>();
+        final var updatedAt = LocalDateTime.now();
+        var stickerWasAlreadyCollected = false;
+
+        for (final var userSticker : currentAlbumData.collectedUserStickers()) {
+            if (!stickerId.equals(userSticker.getStickerId())) {
+                updatedUserStickers.add(userSticker);
+                continue;
+            }
+
+            stickerWasAlreadyCollected = true;
+
+            if (quantity > 0) {
+                updatedUserStickers.add(new UserSticker(
+                    userSticker.getId(),
+                    stickerId,
+                    quantity,
+                    userSticker.getCreatedAt(),
+                    updatedAt
+                ));
+            }
+        }
+
+        if (!stickerWasAlreadyCollected && quantity > 0) {
+            updatedUserStickers.add(0, new UserSticker(
+                UUID.randomUUID().toString(),
+                stickerId,
+                quantity,
+                updatedAt,
+                updatedAt
+            ));
+        }
+
+        currentAlbumData = currentAlbumData.withCollectedUserStickers(updatedUserStickers);
+        refreshGrid();
     }
 
     private void showContent(Component component) {

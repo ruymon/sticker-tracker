@@ -25,12 +25,12 @@ import sticker_tracker.ui.components.RoundedPanel;
 public final class StickerQuantityDialog {
 
     private static final int DIALOG_WIDTH = 320;
-    private static final int DIALOG_HEIGHT = 230;
+    private static final int DIALOG_HEIGHT = 270;
     private static final int MINIMUM_QUANTITY = 0;
     private static final int MAXIMUM_QUANTITY = 99;
     private static final int QUANTITY_STEP = 1;
     private static final int COUNTER_BUTTON_WIDTH = 44;
-    private static final int COUNTER_CONTROL_HEIGHT = 36;
+    private static final int COUNTER_CONTROL_HEIGHT = 44;
     private static final int COUNTER_VALUE_WIDTH = 72;
 
     private StickerQuantityDialog() {}
@@ -62,9 +62,9 @@ public final class StickerQuantityDialog {
         final var contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBackground(Theme.BG_PRIMARY);
         contentPanel.setBorder(BorderFactory.createEmptyBorder(
+            Theme.SPACE_MD,
             Theme.SPACE_LG,
-            Theme.SPACE_LG,
-            Theme.SPACE_LG,
+            Theme.SPACE_MD,
             Theme.SPACE_LG
         ));
 
@@ -96,7 +96,7 @@ public final class StickerQuantityDialog {
         infoPanel.add(codeLabel);
         infoPanel.add(Box.createVerticalStrut(Theme.SPACE_XS));
         infoPanel.add(nameLabel);
-        infoPanel.add(Box.createVerticalStrut(Theme.SPACE_MD));
+        infoPanel.add(Box.createVerticalStrut(Theme.SPACE_LG));
         infoPanel.add(quantityLabel);
         infoPanel.add(Box.createVerticalStrut(Theme.SPACE_XS));
         infoPanel.add(quantityControl.panel());
@@ -111,6 +111,12 @@ public final class StickerQuantityDialog {
     ) {
         final var actionsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, Theme.SPACE_SM, Theme.SPACE_NONE));
         actionsPanel.setOpaque(false);
+        actionsPanel.setBorder(BorderFactory.createEmptyBorder(
+            Theme.SPACE_MD,
+            Theme.SPACE_NONE,
+            Theme.SPACE_NONE,
+            Theme.SPACE_NONE
+        ));
 
         final var cancelButton = new RoundedButton("Cancelar", RoundedButton.Variant.GHOST);
         cancelButton.addActionListener(actionEvent -> dialog.dispose());
