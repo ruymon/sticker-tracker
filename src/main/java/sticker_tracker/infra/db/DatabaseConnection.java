@@ -12,7 +12,8 @@ public final class DatabaseConnection {
     private static final String USER = findEnvironmentValue("DB_USERNAME", "root");
     private static final String PASSWORD = findEnvironmentValue("DB_PASSWORD", "root");
     private static final String URL = "jdbc:mysql://" + HOST + ":" + PORT + "/" + DATABASE
-        + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+        + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+        + "&useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci";
 
     private static DatabaseConnection instance;
 
