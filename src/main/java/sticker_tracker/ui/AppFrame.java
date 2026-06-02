@@ -135,6 +135,8 @@ public final class AppFrame extends JFrame {
     private void refreshActiveScreen() {
         if (NavigationConfig.SCREEN_HOME.equals(activeScreenName)) {
             homeScreen.refreshData();
+        } else if (NavigationConfig.SCREEN_ALBUM.equals(activeScreenName)) {
+            albumScreen.refreshLayout();
         }
     }
 

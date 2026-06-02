@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
+import javax.swing.JViewport;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import sticker_tracker.ui.Theme;
@@ -40,7 +41,7 @@ public class WrapLayout extends FlowLayout {
 
     private Dimension layoutSize(Container target, boolean preferred) {
         synchronized (target.getTreeLock()) {
-            int targetWidth = target.getSize().width;
+            int targetWidth = findAvailableWidth(target);
 
             if (targetWidth == 0) {
                 targetWidth = Integer.MAX_VALUE;
@@ -107,5 +108,27 @@ public class WrapLayout extends FlowLayout {
         }
 
         dimension.height += rowHeight;
+    }
+
+    private int findAvailableWidth(Container target) {
+        if (target.getSize().width > 0) {
+            return target.getSize().width;
+        }
+
+        final var viewport = SwingUtilities.getAncestorOfClass(JViewport.class, target);
+        if (viewport != null && viewport.getWidth() > 0) {
+            return viewport.getWidth();
+        }
+
+        var parent = target.getParent();
+        while (parent != null) {
+            if (parent.getWidth() > 0) {
+                return parent.getWidth();
+            }
+
+            parent = parent.getParent();
+        }
+
+        return 0;
     }
 }

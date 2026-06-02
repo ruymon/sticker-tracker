@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import sticker_tracker.domain.Sticker;
 import sticker_tracker.domain.UserSticker;
@@ -51,6 +52,10 @@ public final class AlbumScreen extends JPanel {
 
     public void refreshAlbum() {
         loadAlbumData(false);
+    }
+
+    public void refreshLayout() {
+        refreshGridLayout();
     }
 
     private void loadAlbumData() {
@@ -166,8 +171,22 @@ public final class AlbumScreen extends JPanel {
             ), BorderLayout.CENTER);
         }
 
+        refreshGridLayout();
+    }
+
+    private void refreshGridLayout() {
+        if (gridPanel == null) {
+            return;
+        }
+
         gridPanel.revalidate();
         gridPanel.repaint();
+        SwingUtilities.invokeLater(() -> {
+            if (gridPanel != null) {
+                gridPanel.revalidate();
+                gridPanel.repaint();
+            }
+        });
     }
 
     private Component buildNoResultsState() {
