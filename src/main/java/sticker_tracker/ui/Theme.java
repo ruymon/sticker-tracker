@@ -7,21 +7,21 @@ public final class Theme {
 
     private Theme() {}
 
-    public static final Color BG_PRIMARY = Color.decode("#0A0A0A");
-    public static final Color BG_SECONDARY = Color.decode("#141414");
-    public static final Color BG_CARD = Color.decode("#1C1C1C");
-    public static final Color BG_HOVER = Color.decode("#242424");
+    public static final Color BG_PRIMARY = Color.decode("#FFFFFF");
+    public static final Color BG_SECONDARY = Color.decode("#F7F7F8");
+    public static final Color BG_CARD = Color.decode("#FFFFFF");
+    public static final Color BG_HOVER = Color.decode("#ECEEF0");
 
-    public static final Color TEXT_PRIMARY = Color.decode("#F5F5F5");
-    public static final Color TEXT_SECONDARY = Color.decode("#A3A3A3");
-    public static final Color TEXT_MUTED = Color.decode("#525252");
+    public static final Color TEXT_PRIMARY = Color.decode("#09090B");
+    public static final Color TEXT_SECONDARY = Color.decode("#71717A");
+    public static final Color TEXT_MUTED = Color.decode("#A1A1AA");
 
     public static final Color ACCENT = Color.decode("#22C55E");
     public static final Color ACCENT_HOVER = Color.decode("#16A34A");
-    public static final Color ACCENT_MUTED = Color.decode("#14532D");
+    public static final Color ACCENT_MUTED = Color.decode("#DCFCE7");
 
-    public static final Color BORDER = Color.decode("#262626");
-    public static final Color BORDER_FOCUS = Color.decode("#404040");
+    public static final Color BORDER = Color.decode("#E5E5EA");
+    public static final Color BORDER_FOCUS = Color.decode("#D4D4D8");
 
     public static final Color SUCCESS = Color.decode("#22C55E");
     public static final Color WARNING = Color.decode("#EAB308");
@@ -41,6 +41,7 @@ public final class Theme {
     public static final float SIZE_LG = 20f;
     public static final float SIZE_XL = 24f;
     public static final float SIZE_2XL = 32f;
+    public static final float SIZE_DISPLAY = 46f;
 
     public static final int SPACE_XS = 4;
     public static final int SPACE_SM = 8;
@@ -49,7 +50,7 @@ public final class Theme {
     public static final int SPACE_XL = 32;
     public static final int SPACE_2XL = 48;
 
-    public static final int RADIUS_SM = 6;
+    public static final int RADIUS_SM = 8;
     public static final int RADIUS_MD = 12;
     public static final int RADIUS_LG = 16;
     public static final int RADIUS_XL = 24;
@@ -58,10 +59,16 @@ public final class Theme {
     public static final int WINDOW_MIN_HEIGHT = 720;
     public static final int SIDEBAR_WIDTH = 220;
     public static final int SPACE_NONE = 0;
+    public static final int PAGE_PADDING = 32;
+    public static final int PAGE_HEADER_HEIGHT = 72;
+    public static final int CARD_PADDING = 24;
     public static final int NAVIGATION_INDICATOR_WIDTH = 3;
     public static final int STICKER_CARD_WIDTH = 100;
     public static final int STICKER_CARD_HEIGHT = 140;
     public static final int STICKER_IMAGE_SIZE = 80;
+    public static final int DASHBOARD_PROGRESS_CARD_HEIGHT = 200;
+    public static final int DASHBOARD_STATS_ROW_HEIGHT = 116;
+    public static final int DASHBOARD_BOTTOM_ROW_HEIGHT = 284;
     public static final int STICKER_NAME_MAXIMUM_LENGTH = 18;
     public static final int PROGRESS_BAR_HEIGHT = 8;
     public static final int SECTION_PROGRESS_BAR_HEIGHT = 4;

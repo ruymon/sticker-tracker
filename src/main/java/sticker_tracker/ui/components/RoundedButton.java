@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import sticker_tracker.ui.Theme;
 
@@ -33,7 +34,8 @@ public class RoundedButton extends JButton {
         setContentAreaFilled(false);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         setFont(Theme.FONT_MEDIUM.deriveFont(Theme.SIZE_SM));
-        setForeground(Theme.TEXT_PRIMARY);
+        setForeground(resolveTextColor());
+        setBorder(BorderFactory.createEmptyBorder(10, 16, 10, 16));
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -52,7 +54,7 @@ public class RoundedButton extends JButton {
 
     public void setActive(boolean activeState) {
         this.activeState = activeState;
-        setForeground(activeState ? Theme.ACCENT : Theme.TEXT_PRIMARY);
+        setForeground(resolveTextColor());
         repaint();
     }
 
@@ -65,8 +67,15 @@ public class RoundedButton extends JButton {
         );
         graphics2d.setColor(resolveBackground());
         graphics2d.fillRoundRect(0, 0, getWidth(), getHeight(), Theme.RADIUS_MD, Theme.RADIUS_MD);
+
+        if (variant != Variant.PRIMARY) {
+            graphics2d.setColor(Theme.BORDER);
+            graphics2d.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, Theme.RADIUS_MD, Theme.RADIUS_MD);
+        }
+
         graphics2d.dispose();
 
+        setForeground(resolveTextColor());
         super.paintComponent(graphics);
     }
 
@@ -83,5 +92,17 @@ public class RoundedButton extends JButton {
             case SECONDARY -> hovered ? Theme.BG_HOVER : Theme.BG_CARD;
             case GHOST -> hovered ? Theme.BG_HOVER : Theme.TRANSPARENT;
         };
+    }
+
+    private Color resolveTextColor() {
+        if (variant == Variant.PRIMARY) {
+            return Color.WHITE;
+        }
+
+        if (activeState) {
+            return Theme.ACCENT_HOVER;
+        }
+
+        return Theme.TEXT_PRIMARY;
     }
 }

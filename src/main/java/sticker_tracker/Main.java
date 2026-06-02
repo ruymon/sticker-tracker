@@ -1,6 +1,6 @@
 package sticker_tracker;
 
-import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import sticker_tracker.ui.AppFrame;
@@ -13,7 +13,7 @@ public final class Main {
 
     public static void main(String[] args) {
         FontLoader.load();
-        FlatDarkLaf.setup();
+        FlatLightLaf.setup();
         configureFlatLaf();
 
         SwingUtilities.invokeLater(() -> {
@@ -31,9 +31,10 @@ public final class Main {
         UIManager.put("ScrollBar.thumbArc", Theme.RADIUS_SM);
         UIManager.put("ScrollBar.width", Theme.SCROLL_BAR_WIDTH);
         UIManager.put("ScrollBar.thumb", Theme.BG_HOVER);
-        UIManager.put("TextField.background", Theme.BG_SECONDARY);
+        UIManager.put("TextField.background", Theme.BG_CARD);
         UIManager.put("TextField.foreground", Theme.TEXT_PRIMARY);
         UIManager.put("TextField.caretColor", Theme.ACCENT);
+        UIManager.put("TextField.inactiveForeground", Theme.TEXT_MUTED);
         UIManager.put("Separator.foreground", Theme.BORDER);
     }
 }
