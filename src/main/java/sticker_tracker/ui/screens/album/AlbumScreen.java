@@ -2,6 +2,8 @@ package sticker_tracker.ui.screens.album;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -11,6 +13,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import sticker_tracker.domain.Sticker;
@@ -86,7 +89,7 @@ public final class AlbumScreen extends JPanel {
     }
 
     private JScrollPane buildScrollableContent(AlbumData albumData) {
-        final var contentPanel = new JPanel();
+        final var contentPanel = new ViewportWidthPanel();
         contentPanel.setBackground(Theme.BG_PRIMARY);
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(
@@ -98,6 +101,7 @@ public final class AlbumScreen extends JPanel {
 
         gridPanel = new JPanel(new BorderLayout());
         gridPanel.setOpaque(false);
+        gridPanel.setAlignmentX(LEFT_ALIGNMENT);
 
         contentPanel.add(new AlbumHeaderSection(
             albumData.collectionName(),
@@ -223,5 +227,41 @@ public final class AlbumScreen extends JPanel {
         add(component, BorderLayout.CENTER);
         revalidate();
         repaint();
+    }
+
+    private static final class ViewportWidthPanel extends JPanel implements Scrollable {
+
+        @Override
+        public Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
+        }
+
+        @Override
+        public int getScrollableUnitIncrement(
+            Rectangle visibleRectangle,
+            int orientation,
+            int direction
+        ) {
+            return Theme.SCROLL_UNIT_INCREMENT;
+        }
+
+        @Override
+        public int getScrollableBlockIncrement(
+            Rectangle visibleRectangle,
+            int orientation,
+            int direction
+        ) {
+            return visibleRectangle.height;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportWidth() {
+            return true;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
+        }
     }
 }

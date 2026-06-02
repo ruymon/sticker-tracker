@@ -1,6 +1,7 @@
 package sticker_tracker.ui.screens.album.sections;
 
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -46,6 +47,7 @@ public final class AlbumGridSection extends JPanel {
         setOpaque(false);
         setAlignmentX(LEFT_ALIGNMENT);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 
         buildSections();
     }
@@ -120,6 +122,7 @@ public final class AlbumGridSection extends JPanel {
         final var sectionGrid = new JPanel(new WrapLayout(FlowLayout.LEFT, Theme.SPACE_SM, Theme.SPACE_SM));
         sectionGrid.setOpaque(false);
         sectionGrid.setAlignmentX(LEFT_ALIGNMENT);
+        sectionGrid.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 
         for (final var sticker : sectionStickers) {
             final var userSticker = collectedByStickerId.get(sticker.getId());
